@@ -1,0 +1,51 @@
+DEMAND FORECASTING SUMMARY - horizon 7 day(s)
+==============================================================================
+Task      : predict units_sold of a store-product on day t using only data up to day t-7
+Periods   : train 2022-01-21..2023-07-05 | validation 2023-07-06..2023-10-03 | test 2023-10-04..2024-01-01
+Selected  : Series mean (simplest eligible model with validation MAE within 1% of the best eligible MAE)
+
+VALIDATION RESULTS (fit on train)
+                 model  eligible     mae    rmse  wape     r2   bias  mae_7d_total  wape_7d_total
+           Global mean     False  89.257 108.855 0.653 -0.000 -0.421       225.988          0.236
+           Series mean      True  89.316 108.973 0.653 -0.002 -0.421       228.312          0.238
+         Naive (lag 7)      True 119.299 153.317 0.873 -0.984  0.377       314.330          0.328
+     Moving average 7d      True  93.686 116.193 0.685 -0.139  0.440       290.116          0.303
+    Moving average 28d      True  90.813 111.063 0.664 -0.041  0.504       254.260          0.266
+     Linear Regression      True  89.315 108.942 0.653 -0.002 -0.362       227.291          0.237
+         Random Forest      True  89.371 108.883 0.654 -0.001  0.109       226.679          0.237
+Hist Gradient Boosting      True  89.431 108.903 0.654 -0.001  0.357       226.368          0.236
+
+RANDOM FOREST SETTINGS TRIED (validation MAE)
+ min_samples_leaf  max_depth  val_mae
+               30         12   89.371
+              100          8   89.415
+
+TEST RESULTS (fit on train+validation; same test period for every model)
+Rows with valid=False are NOT usable forecasting models; they only show what leakage would look like.
+                  model  valid     mae    rmse  wape     r2   bias  mae_7d_total  wape_7d_total
+            Global mean   True  88.512 108.194 0.646 -0.000 -0.703       230.004          0.239
+            Series mean   True  88.494 108.221 0.646 -0.001 -0.703       229.380          0.239
+          Naive (lag 7)   True 119.254 152.616 0.870 -0.990 -0.277       322.722          0.336
+      Moving average 7d   True  93.390 115.724 0.681 -0.144 -0.163       302.100          0.314
+     Moving average 28d   True  89.750 110.169 0.655 -0.037 -0.251       255.617          0.266
+      Linear Regression   True  88.500 108.181 0.646  0.000 -0.482       229.603          0.239
+          Random Forest   True  88.498 108.241 0.646 -0.001 -1.022       229.563          0.239
+ Hist Gradient Boosting   True  88.408 108.236 0.645 -0.001 -1.425       229.509          0.239
+ Demand Forecast column  False   9.989  22.370 0.073  0.957  6.757        49.080          0.051
+LR + same-day inventory  False  68.978  87.939 0.503  0.339 -0.775       188.351          0.196
+
+ML MODEL vs SERIES-MEAN BASELINE ON TEST (mean difference of absolute error, 95% paired bootstrap; negative = ML better)
+                 model          vs  mae_diff  ci_low  ci_high
+     Linear Regression Series mean     0.006  -0.084    0.102
+         Random Forest Series mean     0.003  -0.125    0.126
+Hist Gradient Boosting Series mean    -0.086  -0.209    0.033
+
+INTERPRETATION (generated from the numbers above)
+- Best ML model on test is Hist Gradient Boosting (MAE 88.41) vs Series mean (MAE 88.49): +0.10% MAE improvement; the interval includes 0: no evidence that it differs from the simple baseline.
+- Naive (lag 7) has MAE 119.25 (1.35x the series mean). Copying an old day is worse because each day's sales are independent noise around the average, so the old day adds its own noise.
+- R2 of the selected model on test is -0.001: it explains almost none of the day-to-day variation.
+- NOT VALID: Demand Forecast column reaches MAE 9.99 / R2 0.96 only because it uses information unavailable when forecasting (leakage).
+- NOT VALID: LR + same-day inventory reaches MAE 68.98 / R2 0.34 only because it uses information unavailable when forecasting (leakage).
+- 7-day totals (what replenishment needs): the selected model's MAE on weekly totals per store-product is 229.4 units, a WAPE of 23.9%, versus a daily WAPE of 64.6%; errors partly cancel when days are summed (series-mean weekly MAE 229.4).
+
+LIMITATION: the dataset is SYNTHETIC. Results do not show real retail savings and cannot be generalised.

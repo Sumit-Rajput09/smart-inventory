@@ -1,0 +1,55 @@
+PREPROCESSING SUMMARY
+======================================================================
+Raw data      : 73100 rows x 15 columns
+Cleaned data  : 73100 rows x 17 columns
+Date range    : 2022-01-01 to 2024-01-01
+Series        : 100 store-product combinations
+Forecast horizon used for features: 1 day(s)
+
+COLUMN MAPPING (original -> internal)
+  Date                   -> date
+  Store ID               -> store_id
+  Product ID             -> product_id
+  Category               -> category
+  Region                 -> region
+  Inventory Level        -> inventory_level
+  Units Sold             -> units_sold
+  Units Ordered          -> units_ordered
+  Demand Forecast        -> demand_forecast
+  Price                  -> price
+  Discount               -> discount
+  Weather Condition      -> weather
+  Holiday/Promotion      -> holiday_promo
+  Competitor Pricing     -> competitor_price
+  Seasonality            -> seasonality
+
+CLEANING ACTIONS (non-zero only; full list in data_quality_report.csv)
+  [6_impossible_values] negative value (demand_forecast): 673 rows -> set to missing
+  [10_imputation] missing filled by past value (max 7 rows back) (demand_forecast): 672 rows -> forward-fill inside store-product series (past only)
+  [10_imputation] still missing after causal fill (demand_forecast): 1 rows -> left as NaN; imputed with TRAIN-only median inside the model pipeline
+  [13_outliers] outside 1.5*IQR of its store-product series (units_sold): 808 rows -> flagged in column outlier_<name>, NOT removed (valid unusual values are kept)
+
+MISSING-VALUE STRATEGY
+  target (units_sold)   : never imputed, rows dropped
+  other numeric columns : forward-fill from the PAST inside each store-product series (max 7 rows);
+                          anything still missing is imputed later with a median fitted on the TRAIN period only
+  text columns          : 'Unknown'
+
+FEATURES
+  23 model features: year, month, day, day_of_week, day_of_year, week_of_year, is_weekend, price, discount, competitor_price, effective_price, price_vs_competitor, holiday_promo, units_sold_lag_1, units_sold_lag_7, units_sold_lag_14, roll_mean_7, roll_std_7, roll_mean_14, roll_std_14, roll_mean_28, roll_std_28, trend_7_vs_28
+
+LEAKAGE - columns that must NOT be used to predict same-day demand
+  units_sold: this is the prediction target itself
+  demand_forecast: is almost a copy of units_sold in this dataset (correlation ~0.997), i.e. it already contains the answer
+  units_ordered: the order quantity is decided on the same day; it is not known before the demand is observed
+OTHER EXCLUDED COLUMNS
+  weather: not known in advance at forecast time (would need its own forecast)
+  seasonality: label is inconsistent with the calendar month in this dataset (see inspection report)
+  inventory_level: same-day stock is bounded by sales and is not known before the day; kept for stock-out rules, not for demand
+
+CHRONOLOGICAL SPLIT (default 90-day validation, 90-day test)
+  train      : 2022-01-01 to 2023-07-05  (55100 rows)
+  validation : 2023-07-06 to 2023-10-03  (9000 rows)
+  test       : 2023-10-04 to 2024-01-01  (9000 rows)
+
+LIMITATION: the dataset is SYNTHETIC. Results do not demonstrate real retail savings.

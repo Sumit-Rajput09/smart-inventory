@@ -1,0 +1,142 @@
+
+==============================================================================
+1. LOADING
+==============================================================================
+File: /home/claude/smart-inventory/data/raw/retail_store_inventory.csv
+
+==============================================================================
+2. COLUMN NAMES, DATA TYPES AND MAPPING TO INTERNAL NAMES
+==============================================================================
+     original_name    internal_name   dtype
+              Date             date  object
+          Store ID         store_id  object
+        Product ID       product_id  object
+          Category         category  object
+            Region           region  object
+   Inventory Level  inventory_level   int64
+        Units Sold       units_sold   int64
+     Units Ordered    units_ordered   int64
+   Demand Forecast  demand_forecast float64
+             Price            price float64
+          Discount         discount   int64
+ Weather Condition          weather  object
+ Holiday/Promotion    holiday_promo   int64
+Competitor Pricing competitor_price float64
+       Seasonality      seasonality  object
+Unrecognised columns (kept, not discarded): none
+
+==============================================================================
+3. FIRST AND LAST FIVE RECORDS
+==============================================================================
+-- head --
+         date store_id product_id     category region  inventory_level  units_sold  units_ordered  demand_forecast  price  discount weather  holiday_promo  competitor_price seasonality
+0  2022-01-01     S001      P0001    Groceries  North              231         127             55           135.47  33.50        20   Rainy              0             29.69      Autumn
+1  2022-01-01     S001      P0002         Toys  South              204         150             66           144.04  63.01        20   Sunny              0             66.16      Autumn
+2  2022-01-01     S001      P0003         Toys   West              102          65             51            74.02  27.99        10   Sunny              1             31.32      Summer
+3  2022-01-01     S001      P0004         Toys  North              469          61            164            62.18  32.72        10  Cloudy              1             34.74      Autumn
+4  2022-01-01     S001      P0005  Electronics   East              166          14            135             9.26  73.64         0   Sunny              0             68.95      Summer
+-- tail --
+             date store_id product_id   category region  inventory_level  units_sold  units_ordered  demand_forecast  price  discount weather  holiday_promo  competitor_price seasonality
+73095  2024-01-01     S005      P0016  Furniture   East               96           8            127            18.46  73.73        20   Snowy              0             72.45      Winter
+73096  2024-01-01     S005      P0017       Toys  North              313          51            101            48.43  82.57        10  Cloudy              0             83.78      Autumn
+73097  2024-01-01     S005      P0018   Clothing   West              278          36            151            39.65  11.11        10   Rainy              0             10.91      Winter
+73098  2024-01-01     S005      P0019       Toys   East              374         264             21           270.52  53.14        20   Rainy              0             55.80      Spring
+73099  2024-01-01     S005      P0020  Groceries   East              117           6            165             2.33  78.39        20   Rainy              1             79.52      Spring
+
+==============================================================================
+4. SHAPE
+==============================================================================
+Rows: 73100   Columns: 15
+
+==============================================================================
+5. MISSING VALUES AND DUPLICATES
+==============================================================================
+                  missing  pct
+date                    0  0.0
+store_id                0  0.0
+product_id              0  0.0
+category                0  0.0
+region                  0  0.0
+inventory_level         0  0.0
+units_sold              0  0.0
+units_ordered           0  0.0
+demand_forecast         0  0.0
+price                   0  0.0
+discount                0  0.0
+weather                 0  0.0
+holiday_promo           0  0.0
+competitor_price        0  0.0
+seasonality             0  0.0
+Exact duplicate rows: 0
+Duplicate (date, store_id, product_id) keys: 0
+
+==============================================================================
+6. UNIQUE COUNTS OF CATEGORICAL COLUMNS
+==============================================================================
+store_id: 5 unique -> {'S001': 14620, 'S002': 14620, 'S003': 14620, 'S004': 14620, 'S005': 14620}
+product_id: 20 unique -> {'P0001': 3655, 'P0002': 3655, 'P0003': 3655, 'P0004': 3655, 'P0005': 3655, 'P0006': 3655, 'P0007': 3655, 'P0008': 3655}
+category: 5 unique -> {'Furniture': 14699, 'Toys': 14643, 'Clothing': 14626, 'Groceries': 14611, 'Electronics': 14521}
+region: 4 unique -> {'East': 18349, 'South': 18297, 'North': 18228, 'West': 18226}
+weather: 4 unique -> {'Sunny': 18290, 'Rainy': 18278, 'Snowy': 18272, 'Cloudy': 18260}
+seasonality: 4 unique -> {'Spring': 18317, 'Summer': 18305, 'Winter': 18285, 'Autumn': 18193}
+
+==============================================================================
+7. NUMERIC SUMMARY
+==============================================================================
+                    count     mean      std    min     25%      50%      75%     max   variance   skew
+inventory_level   73100.0  274.470  129.950  50.00  162.00  273.000  387.000  500.00  16886.876  0.010
+units_sold        73100.0  136.465  108.919   0.00   49.00  107.000  203.000  499.00  11863.437  0.905
+units_ordered     73100.0  110.004   52.277  20.00   65.00  110.000  155.000  200.00   2732.932  0.004
+demand_forecast   73100.0  141.495  109.254  -9.99   53.67  113.015  208.052  518.55  11936.453  0.895
+price             73100.0   55.135   26.022  10.00   32.65   55.050   77.860  100.00    677.142 -0.003
+discount          73100.0   10.010    7.084   0.00    5.00   10.000   15.000   20.00     50.179 -0.002
+holiday_promo     73100.0    0.497    0.500   0.00    0.00    0.000    1.000    1.00      0.250  0.011
+competitor_price  73100.0   55.146   26.191   5.03   32.68   55.010   77.820  104.94    685.990 -0.002
+
+==============================================================================
+8. DATE INSPECTION
+==============================================================================
+Share of values in ISO format YYYY-MM-DD: 100.00%
+Unparseable / missing dates: 0
+Date range: 2022-01-01 to 2024-01-01  (731 distinct days)
+Calendar days in range: 731; missing calendar days overall: 0
+Store-product series: 100; rows per series min/median/max = 731/731/731
+
+==============================================================================
+9. INVALID VALUES AND INCONSISTENT RECORDS
+==============================================================================
+  negative units_sold                                    : 0
+  negative inventory_level                               : 0
+  negative units_ordered                                 : 0
+  negative demand_forecast                               : 673
+  price <= 0                                             : 0
+  competitor_price <= 0                                  : 0
+  price > 10x median price (suspiciously high)           : 0
+  discount outside 0-100                                 : 0
+  holiday_promo not in {0,1}                             : 0
+  units_sold > inventory_level                           : 0
+  inventory_level == 0                                   : 0
+  products that appear in more than one category        : 20 of 20
+  stores that appear in more than one region            : 5 of 5
+  'seasonality' label equals the northern-hemisphere season of the date: 25.2% (random would be ~25%)
+
+==============================================================================
+10. WHAT CAN THE DATA SUPPORT? (checks that decide the project scope)
+==============================================================================
+  corr(Units Sold, Demand Forecast) = 0.9969;  mean |Units Sold - Demand Forecast| = 8.34
+  autocorrelation of units_sold within a store-product series: lag 1: -0.000, lag 7: +0.002, lag 14: -0.005, lag 28: +0.000
+  std of units_sold overall: 108.9;  std of the 100 series means: 4.6
+  mean units_sold by weekday: min 135.1, max 137.3;  by month: min 134.0, max 139.4
+  corr(Units Ordered, Inventory Level) = +0.001
+  corr(Units Sold, Inventory Level)    = +0.590
+
+==============================================================================
+FINDINGS THAT AFFECT THE PROJECT
+==============================================================================
+  1. category/region are NOT stable per product/store (they vary row by row) - they are attributes of the row, not master data. Category/region analysis is possible but a 'product' has no single category.
+  2. the Seasonality column does not follow the calendar -> not used as a feature; use month/day-of-year instead.
+  3. Demand Forecast is almost identical to Units Sold (corr 0.997). It cannot be used as an input (target leakage). It is only useful as a 'vendor forecast' benchmark, and even then it was probably generated from the actual sales.
+  4. no autocorrelation: past sales carry almost no information about future sales. Expect lag/rolling-feature models to perform about the same as a simple mean baseline. This must be reported honestly, not hidden.
+  5. weekday and monthly seasonality are weak (<5% / <10% spread).
+  6. The dataset is SYNTHETIC (Kaggle). Results must not be presented as real business savings.
+  7. There are no real stock-out labels and no supplier lead times; the rule-based stock-out analysis must use a configurable lead time, and any classifier would need clearly labelled SIMULATED labels.

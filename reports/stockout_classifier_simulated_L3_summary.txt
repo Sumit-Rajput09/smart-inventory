@@ -1,0 +1,36 @@
+SIMULATED STOCK-OUT CLASSIFIER - lead time 3 day(s)
+==============================================================================
+!! THE LABEL IS SIMULATED. The dataset has no real stock-out records. !!
+Label: 1 if the recorded units sold on days t..t+2 sum to more than inventory_level on day t (hypothetical: assumes no delivery arrives). It is NOT an observed stock-out.
+Decision moment: start of day t: stock on hand = inventory_level(t); history up to day t-1
+Purging: rows whose label window reaches the next period were removed (2 day(s)) (prevents labels of one period using sales of the next).
+Test period 2023-10-02..2023-12-30: 76.5% of rows are simulated stock-outs.
+
+Operating thresholds: ML models and the rule probability use the highest threshold that still catches >= 95% of stock-outs on VALIDATION data; the rule-based trigger uses its documented threshold (probability >= 1 - service level, i.e. 'at or below the reorder point').
+
+VALIDATION (fit on train)
+                           model  threshold  precision  recall    f1    f2  specificity  roc_auc  pr_auc  tn   fp  fn   tp
+          Rule-based probability      0.324      0.782   0.950 0.858 0.911        0.114    0.707   0.887 231 1792 338 6439
+             Logistic Regression      0.237      0.786   0.950 0.861 0.912        0.136    0.721   0.896 275 1748 338 6439
+                   Random Forest      0.288      0.785   0.950 0.860 0.912        0.129    0.720   0.896 260 1763 338 6439
+Rule-based reorder-point trigger      0.050      0.770   1.000 0.870 0.943        0.000    0.707   0.887   0 2023   2 6775
+
+TEST (fit on train+validation)
+                           model  threshold  precision  recall    f1    f2  specificity  roc_auc  pr_auc  tn   fp  fn   tp
+Rule-based reorder-point trigger      0.050      0.765   0.999 0.867 0.942        0.001    0.722   0.893   2 2110   4 6884
+          Rule-based probability      0.324      0.781   0.950 0.857 0.911        0.132    0.722   0.893 279 1833 345 6543
+             Logistic Regression      0.237      0.784   0.945 0.857 0.908        0.150    0.740   0.905 316 1796 378 6510
+                   Random Forest      0.288      0.785   0.939 0.855 0.904        0.160    0.738   0.904 337 1775 418 6470
+      Flag everything (baseline)      0.500      0.765   1.000 0.867 0.942        0.000    0.500   0.765   0 2112   0 6888
+
+Selected ML model (highest validation PR-AUC): Random Forest
+
+INTERPRETATION (generated from the numbers above)
+- Stock-out class: Random Forest reaches recall 0.94 with precision 0.78 (F1 0.86); the reorder-point trigger reaches recall 1.00 with precision 0.77.
+- Missed stock-outs (false negatives) on test: 418 for Random Forest vs 4 for the rule trigger; false alarms: 1775 vs 2110.
+- Ranking quality (ROC-AUC): Random Forest 0.738 vs rule-based probability 0.722 (+0.016). The learned model separates risky from safe rows better than the formula.
+- Baseline 'flag everything' has recall 1.00 but precision only 0.77: a useful model must keep recall high while raising precision above that.
+
+CAUTIONS
+- The label is hypothetical (no deliveries assumed, real lost sales never observed) and the data is synthetic. In this file sales are a random share of the day's stock, so the learned model may exploit a data-generation pattern that real retail demand would not show.
+- Do not present these scores as real historical stock-out performance. The rule-based risk assessment is a formula, not this classifier.

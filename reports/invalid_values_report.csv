@@ -1,0 +1,8 @@
+column,issue,count
+inventory_level,negative_values,0
+units_sold,negative_values,0
+units_ordered,negative_values,0
+demand_forecast,negative_values,673
+price,negative_values,0
+competitor_pricing,negative_values,0
+discount,outside_0_to_100,0

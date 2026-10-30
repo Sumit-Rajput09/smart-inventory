@@ -1,0 +1,115 @@
+EDA REPORT - 73100 records, 2022-01-01 to 2024-01-01, 5 stores, 20 products
+==============================================================================
+DESCRIPTIVE STATISTICS
+==============================================================================
+                  count   mean  median   std  variance  min   max  range    q1    q3   iqr  skewness  kurtosis  cv_percent
+units_sold        73100  136.5     107 108.9 1.186e+04    0   499    499    49   203   154    0.9053   0.05388       79.81
+inventory_level   73100  274.5     273 129.9 1.689e+04   50   500    450   162   387   225   0.01012      -1.2       47.35
+units_ordered     73100    110     110 52.28     2,733   20   200    180    65   155    90  0.003787    -1.202       47.52
+demand_forecast   73099  142.9   114.4 108.9 1.186e+04 0.01 518.5  518.5 54.95 209.2 154.3    0.8983   0.04722       76.24
+price             73100  55.14   55.05 26.02     677.1   10   100     90 32.65 77.86 45.21 -0.002732    -1.199        47.2
+discount          73100  10.01      10 7.084     50.18    0    20     20     5    15    10 -0.001828    -1.305       70.77
+competitor_price  73100  55.15   55.01 26.19       686 5.03 104.9  99.91 32.68 77.82 45.14 -0.002166     -1.17       47.49
+holiday_promo     73100 0.4973       0   0.5      0.25    0     1      1     0     1     1   0.01078        -2       100.5
+
+==============================================================================
+CORRELATION WITH UNITS SOLD (Pearson and Spearman)
+==============================================================================
+           variable  pearson_r  pearson_p  spearman_rho  spearman_p
+0   demand_forecast     0.9848          0        0.9767           0
+1   inventory_level       0.59          0        0.5683           0
+2          discount   0.002576     0.4862      0.003366      0.3628
+3  competitor_price   0.001259     0.7335     0.0001418      0.9694
+4             price   0.001082       0.77     5.654e-05      0.9878
+5     units_ordered -0.0009297     0.8015    -0.0008124      0.8261
+6     holiday_promo -0.0003739     0.9195      0.001087      0.7689
+
+==============================================================================
+HYPOTHESIS TEST: does the Holiday/Promotion flag change mean units sold?
+==============================================================================
+H0: mean units sold is equal with and without the flag; H1: it differs. alpha = 0.05.
+Test: Welch two-sample t-test (unequal variances), checked with Mann-Whitney U because units_sold is right-skewed.
+Assumptions: independent records (approximate, repeated store-product series) and large n (CLT).
+  value: units_sold
+  group: holiday_promo
+  level_a: 0
+  level_b: 1
+  n_a: 36747
+  n_b: 36353
+  mean_a: 136.51
+  mean_b: 136.42
+  diff_b_minus_a: -0.081448
+  ci_low: -1.6606
+  ci_high: 1.4977
+  t_stat: -0.10109
+  welch_p: 0.91948
+  cohens_d: -0.00074778
+  mannwhitney_p: 0.76893
+  mannwhitney_u: 6.6877e+08
+
+==============================================================================
+OUTLIER SUMMARY
+==============================================================================
+            column  lower_fence  upper_fence  n_iqr_outliers  pct_iqr_outliers  n_abs_z_gt_3
+0       units_sold         -182          434             715            0.9781           236
+1  inventory_level       -175.5        724.5               0                 0             0
+2    units_ordered          -70          290               0                 0             0
+3            price       -35.16        145.7               0                 0             0
+
+==============================================================================
+TOP AND SLOWEST PRODUCTS
+==============================================================================
+Top:
+  product_id  rank  total_units  mean_units  mean_inventory  sell_through
+0      P0016     1       508472       139.1           277.5        0.5013
+1      P0020     2       507708       138.9           276.8        0.5018
+2      P0014     3       507622       138.9           277.9        0.4998
+3      P0015     4       507283       138.8           276.4        0.5021
+4      P0005     5       503648       137.8             273        0.5047
+
+Slowest:
+   product_id  rank  total_units  mean_units  mean_inventory  sell_through
+19      P0002    20       487827       133.5           271.1        0.4922
+18      P0008    19       488563       133.7           272.8          0.49
+17      P0012    18       491670       134.5           272.5        0.4936
+16      P0018    17       492551       134.8           272.5        0.4945
+15      P0003    16       493279         135           274.9        0.4909
+
+==============================================================================
+MISSING VALUES
+==============================================================================
+              column  missing_after_cleaning  missing_before_cleaning
+0               date                       0                        0
+1           store_id                       0                        0
+2         product_id                       0                        0
+3           category                       0                        0
+4             region                       0                        0
+5    inventory_level                       0                        0
+6         units_sold                       0                        0
+7      units_ordered                       0                        0
+8    demand_forecast                       1                        0
+9              price                       0                        0
+10          discount                       0                        0
+11           weather                       0                        0
+12     holiday_promo                       0                        0
+13  competitor_price                       0                        0
+14       seasonality                       0                        0
+
+==============================================================================
+INSIGHTS AND BUSINESS INTERPRETATION
+==============================================================================
+1. TREND: no significant linear trend in total daily sales (-0.3% per year, p = 0.551). Demand is flat over the period, so growth-based planning is not supported by this data.
+2. SEASONALITY: monthly means differ by 4.0% of the overall mean (Kruskal-Wallis p = 0.060); weekday means differ by 1.6% (p = 0.665). The differences are small in practical terms, so month/weekday alone will not give strong forecasting signal.
+3. PRODUCTS: highest mean is P0016 (139.1 units/store-day), lowest is P0002 (133.5); the gap is 4.1% of the overall mean. ANOVA across products: p = 0.601, so the ranking could be due to chance and should not drive decisions.
+4. STORES: ANOVA across 5 groups p = 0.047, eta2 = 0.00013 -> borderline (p between 0.01 and 0.05); with several tests run this may be chance, and the effect size is negligible.
+5. CATEGORIES: ANOVA across 5 groups p = 0.253, eta2 = 0.00007 -> no evidence that average demand differs between them.
+6. REGIONS: ANOVA across 4 groups p = 0.582, eta2 = 0.00003 -> no evidence that average demand differs between them.
+7. PROMOTION/HOLIDAY: mean units sold 136.4 with the flag vs 136.5 without (difference -0.08, 95% CI [-1.66, 1.50], Welch p = 0.919, Mann-Whitney p = 0.769, Cohen's d = -0.001, negligible effect). There is no evidence that promotions/holidays change sales here - unusual for real retail data.
+8. DISCOUNT: ANOVA across 5 discount levels p = 0.918, eta2 = 0.00001. Higher discounts are not associated with higher sales in this data.
+9. CORRELATIONS WITH UNITS SOLD: moderate/strong: demand_forecast (r = +0.98), inventory_level (r = +0.59).
+10. LEAKAGE WARNING: demand_forecast is almost the same series as units_sold, so it is excluded from model inputs.
+11. INVENTORY: median sell-through is 50% of stock per day; units sold exceeded inventory level in 0 records. Stock level behaves like a ceiling on sales in this dataset, which is why inventory and sales correlate - this reflects how the data was generated, not that stocking more causes more demand.
+12. SELL-THROUGH SHAPE: units_sold / inventory_level has mean 0.498 and a maximum of 1.00; a Kolmogorov-Smirnov test against Uniform(0,1) gives D = 0.0057, p = 0.017. The ratio is almost perfectly evenly spread between 0 and 1 (D is tiny; a small p-value here only reflects the huge sample and integer rounding): each day's sales look like a random share of that day's stock. Real retail demand is not generated this way, which is strong evidence the file is simulated; it also means a day's sales cannot be predicted from history, only from same-day stock, which is unknown at forecast time.
+13. OUTLIERS: 1.11% of records lie outside 1.5 x IQR of their own store-product series; they are flagged but kept, because high-sales days are valid demand that the inventory plan must cover.
+14. MISSING VALUES: 1 missing cell(s) remain after cleaning (see the missing-values table; they are left for train-only imputation inside the model pipeline).
+15. CAUTION: the dataset is synthetic. These findings describe this file only and are not evidence about real retail behaviour or savings. Several tests are run above; at alpha = 0.05 about 1 in 20 true-null tests will look significant by chance.

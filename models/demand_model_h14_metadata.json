@@ -1,0 +1,78 @@
+{
+  "created_at": "2026-10-30T07:01:00+00:00",
+  "horizon_days": 14,
+  "target": "units_sold",
+  "task": "predict units_sold of a store-product on day t using only data up to day t-14",
+  "model_name": "Series mean",
+  "model_family": "baseline",
+  "feature_columns": [
+    "month",
+    "day",
+    "day_of_week",
+    "day_of_year",
+    "week_of_year",
+    "is_weekend",
+    "price",
+    "discount",
+    "competitor_price",
+    "effective_price",
+    "price_vs_competitor",
+    "holiday_promo",
+    "units_sold_lag_14",
+    "roll_mean_7",
+    "roll_std_7",
+    "roll_mean_14",
+    "roll_std_14",
+    "roll_mean_28",
+    "roll_std_28",
+    "trend_7_vs_28",
+    "store_id",
+    "product_id"
+  ],
+  "selection_rule": "simplest eligible model with validation MAE within 1% of the best eligible MAE",
+  "rf_best_params": {
+    "min_samples_leaf": 100,
+    "max_depth": 8
+  },
+  "periods": {
+    "train": [
+      "2022-01-28",
+      "2023-07-05"
+    ],
+    "validation": [
+      "2023-07-06",
+      "2023-10-03"
+    ],
+    "test": [
+      "2023-10-04",
+      "2024-01-01"
+    ]
+  },
+  "fitted_on": "train + validation",
+  "validation_metrics": {
+    "mae": 89.32257124681934,
+    "rmse": 108.96773118486193,
+    "wape": 0.6532961634716099,
+    "r2": -0.002089400095960814,
+    "bias": -0.3710190839694651,
+    "mae_7d_total": 228.19543893129767,
+    "wape_7d_total": 0.23831654395598856
+  },
+  "test_metrics": {
+    "mae": 88.50195186391602,
+    "rmse": 108.2182375633188,
+    "wape": 0.6456744549381408,
+    "r2": -0.000497780691232963,
+    "bias": -0.6596351791530956,
+    "mae_7d_total": 229.39295874049947,
+    "wape_7d_total": 0.23867109881432394
+  },
+  "versions": {
+    "python": "3.12.9",
+    "scikit-learn": "1.5.2",
+    "pandas": "2.2.3",
+    "numpy": "2.1.3"
+  },
+  "data_is_synthetic": true,
+  "warning": "Synthetic dataset: metrics do not demonstrate real business value."
+}

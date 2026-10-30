@@ -1,0 +1,5 @@
+column,lower_fence,upper_fence,n_iqr_outliers,pct_iqr_outliers,n_abs_z_gt_3
+units_sold,-182.0,434.0,715,0.9781121751025992,236
+inventory_level,-175.5,724.5,0,0.0,0
+units_ordered,-70.0,290.0,0,0.0,0
+price,-35.165,145.675,0,0.0,0

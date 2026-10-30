@@ -1,0 +1,51 @@
+REPLENISHMENT RECOMMENDATIONS - snapshot at the start of 2024-01-01
+==============================================================================
+Settings: lead_time_days=1.0, service_level=0.95, review_period_days=1.0, lookback_days=90, min_history_days=14, excess_factor=1.0, min_order_qty=0.0, order_multiple=1.0
+z (service level 95%) = 1.645
+
+Store-products analysed: 100 | to reorder now: 58 (58%) | total suggested units: 16,664
+Risk levels: {'Low': 42, 'Medium': 14, 'High': 22, 'Critical': 22, 'Unknown': 0}
+Stock status: {'Low stock': 58, 'Adequate stock': 34, 'Excess stock': 8}
+Median days of cover: 1.87 | mean stock-out probability: 24.3%
+
+Risk levels (from the estimated probability that lead-time demand exceeds the inventory position):
+  Low      : probability <= 1 - service level (the service target is met; equals 'above the reorder point')
+  Medium   : above that, below 20%
+  High     : 20% to below 50%
+  Critical : 50% or more (expected demand during the lead time already exceeds the stock)
+
+TOP 10 MOST URGENT
+store_id product_id  current_inventory  reorder_point  target_inventory  stockout_probability risk_level  suggested_order_qty
+    S004      P0015                 56         305.26            451.22                  0.82   Critical                  396
+    S002      P0007                 53         333.36            477.62                  0.79   Critical                  425
+    S002      P0009                 62         344.75            493.93                  0.77   Critical                  432
+    S005      P0007                 59         310.88            447.33                  0.77   Critical                  389
+    S004      P0019                 65         304.78            437.61                  0.74   Critical                  373
+    S001      P0016                 74         336.59            481.43                  0.73   Critical                  408
+    S001      P0003                 69         303.94            435.27                  0.72   Critical                  367
+    S005      P0003                 98         358.58            515.38                  0.68   Critical                  418
+    S004      P0017                100         345.39            499.87                  0.68   Critical                  400
+    S005      P0016                 96         325.75            470.87                  0.67   Critical                  375
+
+LEAD-TIME SENSITIVITY (the lead time is a setting, not data)
+ lead_time_days  pct_low_stock  pct_critical_or_high  mean_reorder_point  mean_current_inventory  total_units_to_order
+           0.50          36.00                 21.00              194.04                  264.76                  7719
+           1.00          58.00                 44.00              314.56                  264.76                 16664
+           2.00          99.00                 81.00              525.15                  264.76                 39676
+           3.00         100.00                100.00              718.63                  264.76                 59142
+           5.00         100.00                100.00            1,082.23                  264.76                 95498
+           7.00         100.00                100.00            1,429.09                  264.76                130192
+
+FINDING: with a long lead time 100% of items are below their reorder point: stock on hand is only about 1.9 days of demand in this dataset, so any lead time of a few days makes every item look urgent. This is a property of the synthetic data, not a recommendation to order everything.
+
+BACK-TEST OF THE SAFETY-STOCK FORMULA (data the formula had not seen)
+Test period 2023-10-04..2024-01-01, lead time 1 day(s), 9,000 windows over 100 series.
+Target service level 95.0% vs achieved 91.5% (-3.5%); per-series range 83.3%..97.8%. The normal-demand assumption slightly overstates protection.
+
+ASSUMPTIONS AND LIMITATIONS
+- Supplier lead times are NOT in the dataset: the lead time is a setting (default 1 day, because stock on hand covers only about 2 days of demand).
+- Quantities already on order are NOT in the dataset: assumed 0 unless you supply them. (The 'Units Ordered' column is not used: it is unrelated to stock or sales.)
+- Demand per day is estimated from recent history (mean and standard deviation); days are assumed independent, lead time constant, and
+  demand roughly normal. Real sales here are right-skewed and bounded, so probabilities are screening scores, not exact chances.
+- Minimum order quantity and pack size are applied only if you set them; shelf life and costs are not available and are ignored.
+- Every figure is an ESTIMATE from a synthetic dataset. It is not a guarantee, and it does not show real business savings.

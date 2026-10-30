@@ -1,0 +1,53 @@
+DEMAND FORECASTING SUMMARY - horizon 1 day(s)
+==============================================================================
+Task      : predict units_sold of a store-product on day t using only data up to day t-1
+Periods   : train 2022-01-15..2023-07-05 | validation 2023-07-06..2023-10-03 | test 2023-10-04..2024-01-01
+Selected  : Series mean (simplest eligible model with validation MAE within 1% of the best eligible MAE)
+
+VALIDATION RESULTS (fit on train)
+                 model  eligible     mae    rmse  wape     r2   bias  mae_7d_total  wape_7d_total
+           Global mean     False  89.269 108.855 0.653 -0.000 -0.357           NaN            NaN
+           Series mean      True  89.326 108.970 0.653 -0.002 -0.357           NaN            NaN
+         Naive (lag 1)      True 121.279 155.129 0.887 -1.031  0.038           NaN            NaN
+Seasonal naive (lag 7)      True 119.299 153.317 0.873 -0.984  0.377           NaN            NaN
+     Moving average 7d      True  93.545 115.986 0.684 -0.135  0.153           NaN            NaN
+    Moving average 28d      True  90.455 110.787 0.662 -0.036  0.450           NaN            NaN
+     Linear Regression      True  89.310 108.944 0.653 -0.002 -0.376           NaN            NaN
+         Random Forest      True  89.319 108.889 0.653 -0.001 -0.227           NaN            NaN
+Hist Gradient Boosting      True  89.451 108.939 0.654 -0.002  0.247           NaN            NaN
+
+RANDOM FOREST SETTINGS TRIED (validation MAE)
+ min_samples_leaf  max_depth  val_mae
+               30         12   89.459
+              100          8   89.319
+
+TEST RESULTS (fit on train+validation; same test period for every model)
+Rows with valid=False are NOT usable forecasting models; they only show what leakage would look like.
+                  model  valid     mae    rmse  wape     r2   bias  mae_7d_total  wape_7d_total
+            Global mean   True  88.521 108.193 0.646 -0.000 -0.649           NaN            NaN
+            Series mean   True  88.494 108.211 0.646 -0.000 -0.649           NaN            NaN
+          Naive (lag 1)   True 119.641 153.101 0.873 -1.002  0.004           NaN            NaN
+ Seasonal naive (lag 7)   True 119.254 152.616 0.870 -0.990 -0.277           NaN            NaN
+      Moving average 7d   True  93.403 115.644 0.681 -0.143  0.140           NaN            NaN
+     Moving average 28d   True  89.696 110.123 0.654 -0.036 -0.170           NaN            NaN
+      Linear Regression   True  88.483 108.172 0.646  0.000 -0.506           NaN            NaN
+          Random Forest   True  88.425 108.194 0.645 -0.000 -1.155           NaN            NaN
+ Hist Gradient Boosting   True  88.413 108.211 0.645 -0.000 -1.186           NaN            NaN
+ Demand Forecast column  False   9.989  22.370 0.073  0.957  6.757           NaN            NaN
+LR + same-day inventory  False  68.971  87.929 0.503  0.339 -0.742           NaN            NaN
+
+ML MODEL vs SERIES-MEAN BASELINE ON TEST (mean difference of absolute error, 95% paired bootstrap; negative = ML better)
+                 model          vs  mae_diff  ci_low  ci_high
+     Linear Regression Series mean    -0.011  -0.100    0.085
+         Random Forest Series mean    -0.069  -0.173    0.042
+Hist Gradient Boosting Series mean    -0.081  -0.200    0.040
+
+INTERPRETATION (generated from the numbers above)
+- Best ML model on test is Hist Gradient Boosting (MAE 88.41) vs Series mean (MAE 88.49): +0.09% MAE improvement; the interval includes 0: no evidence that it differs from the simple baseline.
+- Naive (lag 1) has MAE 119.64 (1.35x the series mean). Copying an old day is worse because each day's sales are independent noise around the average, so the old day adds its own noise.
+- R2 of the selected model on test is -0.000: it explains almost none of the day-to-day variation.
+- NOT VALID: Demand Forecast column reaches MAE 9.99 / R2 0.96 only because it uses information unavailable when forecasting (leakage).
+- NOT VALID: LR + same-day inventory reaches MAE 68.97 / R2 0.34 only because it uses information unavailable when forecasting (leakage).
+- 7-day-total metrics are shown only for horizons >= 7 days: for shorter horizons the daily forecasts inside a week use sales from that same week, which would not be known when the week is planned.
+
+LIMITATION: the dataset is SYNTHETIC. Results do not show real retail savings and cannot be generalised.

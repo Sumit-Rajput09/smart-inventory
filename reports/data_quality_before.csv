@@ -1,0 +1,16 @@
+column,data_type,missing_count,missing_percentage,unique_values
+date,str,0,0.0,731
+store_id,str,0,0.0,5
+product_id,str,0,0.0,20
+category,str,0,0.0,5
+region,str,0,0.0,4
+inventory_level,int64,0,0.0,451
+units_sold,int64,0,0.0,498
+units_ordered,int64,0,0.0,181
+demand_forecast,float64,0,0.0,31608
+price,float64,0,0.0,8999
+discount,int64,0,0.0,5
+weather_condition,str,0,0.0,4
+holiday_promotion,int64,0,0.0,2
+competitor_pricing,float64,0,0.0,9751
+seasonality,str,0,0.0,4

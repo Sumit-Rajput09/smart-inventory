@@ -1,0 +1,16 @@
+column,missing_after_cleaning,missing_before_cleaning
+date,0,0
+store_id,0,0
+product_id,0,0
+category,0,0
+region,0,0
+inventory_level,0,0
+units_sold,0,0
+units_ordered,0,0
+demand_forecast,1,0
+price,0,0
+discount,0,0
+weather,0,0
+holiday_promo,0,0
+competitor_price,0,0
+seasonality,0,0

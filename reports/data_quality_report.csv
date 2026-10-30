@@ -1,0 +1,57 @@
+step,check,column,affected_rows,pct_of_rows,action
+1_missing_before_cleaning,missing values,date,0,0.0,reported
+1_missing_before_cleaning,missing values,store_id,0,0.0,reported
+1_missing_before_cleaning,missing values,product_id,0,0.0,reported
+1_missing_before_cleaning,missing values,category,0,0.0,reported
+1_missing_before_cleaning,missing values,region,0,0.0,reported
+1_missing_before_cleaning,missing values,inventory_level,0,0.0,reported
+1_missing_before_cleaning,missing values,units_sold,0,0.0,reported
+1_missing_before_cleaning,missing values,units_ordered,0,0.0,reported
+1_missing_before_cleaning,missing values,demand_forecast,0,0.0,reported
+1_missing_before_cleaning,missing values,price,0,0.0,reported
+1_missing_before_cleaning,missing values,discount,0,0.0,reported
+1_missing_before_cleaning,missing values,weather,0,0.0,reported
+1_missing_before_cleaning,missing values,holiday_promo,0,0.0,reported
+1_missing_before_cleaning,missing values,competitor_price,0,0.0,reported
+1_missing_before_cleaning,missing values,seasonality,0,0.0,reported
+2_duplicates,exact duplicate rows,(all),0,0.0,dropped (keep first)
+3_dates,dates parsed with non-ISO fallback,date,0,0.0,"parsed, kept"
+3_dates,unparseable / missing dates,date,0,0.0,dropped (cannot be placed on the timeline)
+4_identifiers,missing store_id/product_id,"store_id,product_id",0,0.0,dropped
+5_numeric_validation,non-numeric text in numeric column,inventory_level,0,0.0,set to missing
+5_numeric_validation,non-numeric text in numeric column,units_sold,0,0.0,set to missing
+5_numeric_validation,non-numeric text in numeric column,units_ordered,0,0.0,set to missing
+5_numeric_validation,non-numeric text in numeric column,demand_forecast,0,0.0,set to missing
+5_numeric_validation,non-numeric text in numeric column,price,0,0.0,set to missing
+5_numeric_validation,non-numeric text in numeric column,discount,0,0.0,set to missing
+5_numeric_validation,non-numeric text in numeric column,competitor_price,0,0.0,set to missing
+5_numeric_validation,non-numeric text in numeric column,holiday_promo,0,0.0,set to missing
+6_impossible_values,negative value,inventory_level,0,0.0,set to missing
+6_impossible_values,negative value,units_sold,0,0.0,set to missing
+6_impossible_values,negative value,units_ordered,0,0.0,set to missing
+6_impossible_values,negative value,demand_forecast,673,0.9207,set to missing
+6_impossible_values,price <= 0,price,0,0.0,set to missing
+6_impossible_values,price <= 0,competitor_price,0,0.0,set to missing
+6_impossible_values,discount outside 0-100,discount,0,0.0,set to missing
+6_impossible_values,"flag not in {0,1}",holiday_promo,0,0.0,set to missing
+7_duplicate_keys,same date+store+product appears again,"date,store_id,product_id",0,0.0,"dropped, last record kept (assumed to be the correction)"
+9_target,missing / invalid target,units_sold,0,0.0,dropped (target is never imputed)
+10_imputation,missing filled by past value (max 7 rows back),inventory_level,0,0.0,forward-fill inside store-product series (past only)
+10_imputation,still missing after causal fill,inventory_level,0,0.0,left as NaN; imputed with TRAIN-only median inside the model pipeline
+10_imputation,missing filled by past value (max 7 rows back),units_ordered,0,0.0,forward-fill inside store-product series (past only)
+10_imputation,still missing after causal fill,units_ordered,0,0.0,left as NaN; imputed with TRAIN-only median inside the model pipeline
+10_imputation,missing filled by past value (max 7 rows back),demand_forecast,672,0.9193,forward-fill inside store-product series (past only)
+10_imputation,still missing after causal fill,demand_forecast,1,0.0014,left as NaN; imputed with TRAIN-only median inside the model pipeline
+10_imputation,missing filled by past value (max 7 rows back),price,0,0.0,forward-fill inside store-product series (past only)
+10_imputation,still missing after causal fill,price,0,0.0,left as NaN; imputed with TRAIN-only median inside the model pipeline
+10_imputation,missing filled by past value (max 7 rows back),discount,0,0.0,forward-fill inside store-product series (past only)
+10_imputation,still missing after causal fill,discount,0,0.0,left as NaN; imputed with TRAIN-only median inside the model pipeline
+10_imputation,missing filled by past value (max 7 rows back),competitor_price,0,0.0,forward-fill inside store-product series (past only)
+10_imputation,still missing after causal fill,competitor_price,0,0.0,left as NaN; imputed with TRAIN-only median inside the model pipeline
+10_imputation,missing filled by past value (max 7 rows back),holiday_promo,0,0.0,forward-fill inside store-product series (past only)
+10_imputation,still missing after causal fill,holiday_promo,0,0.0,left as NaN; imputed with TRAIN-only median inside the model pipeline
+11_consistency,units_sold > inventory_level,"units_sold,inventory_level",0,0.0,reported only (stock may be measured at end of day)
+12_calendar_gaps,missing calendar days inside series,date,0,0.0,reported; lag/rolling features are built by calendar date so gaps do not shift them
+13_outliers,outside 1.5*IQR of its store-product series,units_sold,808,1.1053,"flagged in column outlier_<name>, NOT removed (valid unusual values are kept)"
+13_outliers,outside 1.5*IQR of its store-product series,inventory_level,0,0.0,"flagged in column outlier_<name>, NOT removed (valid unusual values are kept)"
+99_result,rows kept / rows read,(all),73100,100.0,73100 of 73100 rows kept
